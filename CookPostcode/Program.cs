@@ -33,6 +33,8 @@ namespace CookPostcode
                 dataTable.Rows.Add("ME10 3", "3 Collect from Kitchen, Delivery from Sittingbourne");
                 dataTable.Rows.Add("IV", "No Deliveries");
 
+                dataSet.Tables.Add(dataTable);
+
                 return dataSet;
             }
         }
