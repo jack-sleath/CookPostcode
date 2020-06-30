@@ -16,7 +16,7 @@ namespace CookPostcode
                 var dataTable = new DataTable();
 
                 dataTable.Columns.Add("Postcode", typeof(string));
-                dataTable.Columns.Add("Delivery_Type", typeof(string));
+                dataTable.Columns.Add("Delivery", typeof(string));
 
                 dataTable.Rows.Add("TN9", "Delivery from Warehouse");
                 dataTable.Rows.Add("TN9 1AP", "No Deliveries");
