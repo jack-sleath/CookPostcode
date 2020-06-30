@@ -14,12 +14,29 @@ namespace CookPostcode
         {
             //This would come from a DB in production, but currently stored in a seperate class.
             var postCodeDeliveries = MapPostcodeDeliveries(new PostcodeData().PostCodeDataSet);
-            var trimmedPostcode = RemoveWhiteSpace(postcode);
-            
+            var cleanPostcode = RemoveWhiteSpace(postcode);
+            var trimmedPostcode = cleanPostcode;
 
+            var message = "";
 
-            string[] valuesToReturn = {postcode, trimmedPostcode, "" };
-            return valuesToReturn;
+            while (trimmedPostcode.Length > 0 && message == "")
+            {
+                var matchingPostCode = postCodeDeliveries.Where(postCodeDelivery => trimmedPostcode.Contains(postCodeDelivery.PostCode)).FirstOrDefault();
+                if (matchingPostCode != null)
+                {
+                    message = matchingPostCode.Delivery;
+                }
+                trimmedPostcode = trimmedPostcode.Substring(0, trimmedPostcode.Length - 1);
+            }
+
+            if (message == "")
+            {
+                string[] deafultMessage = { postcode, cleanPostcode, "Delivery by Courier" };
+                return deafultMessage;
+            }
+
+            string[] customMessage = { postcode, cleanPostcode, message };
+            return customMessage;
         }
 
         private string RemoveWhiteSpace(string input)
@@ -44,7 +61,7 @@ namespace CookPostcode
                 Delivery = row["Delivery"].ToString()
             }).ToList();
 
-            return listOfPostCodeDeliveries;
+            return listOfPostCodeDeliveries.OrderByDescending(postCodeDelivery => postCodeDelivery.PostCode.Length).ToList();
         }
     }
 }

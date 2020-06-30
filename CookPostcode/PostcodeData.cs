@@ -12,7 +12,6 @@ namespace CookPostcode
             get
             {
                 var dataSet = new DataSet();
-
                 var dataTable = new DataTable();
 
                 dataTable.Columns.Add("Postcode", typeof(string));
