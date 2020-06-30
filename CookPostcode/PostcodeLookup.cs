@@ -14,14 +14,15 @@ namespace CookPostcode
         {
             //This would come from a DB in production, but currently stored in a seperate class.
             var postCodeDeliveries = MapPostcodeDeliveries(new PostcodeData().PostCodeDataSet);
-            var trimmedPostcode = RemoveWhitespace(postcode);
+            var trimmedPostcode = RemoveWhiteSpace(postcode);
+            
+
 
             string[] valuesToReturn = {postcode, trimmedPostcode, "" };
-
             return valuesToReturn;
         }
 
-        private string RemoveWhitespace(string input)
+        private string RemoveWhiteSpace(string input)
         {
             return new string(input.ToCharArray()
                 .Where(c => !char.IsWhiteSpace(c))
@@ -37,13 +38,13 @@ namespace CookPostcode
 
             var postCodeTable = postCodeDataSet.Tables[0];
 
-            var listOfPostCodesDeliveries = postCodeTable.AsEnumerable().Select(row => new PostcodeDelivery
+            var listOfPostCodeDeliveries = postCodeTable.AsEnumerable().Select(row => new PostcodeDelivery
             {
-                PostCode = RemoveWhitespace(row["Postcode"].ToString()),
+                PostCode = RemoveWhiteSpace(row["Postcode"].ToString()),
                 Delivery = row["Delivery"].ToString()
             }).ToList();
 
-            return listOfPostCodesDeliveries;
+            return listOfPostCodeDeliveries;
         }
     }
 }
