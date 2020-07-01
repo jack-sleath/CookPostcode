@@ -16,7 +16,8 @@ namespace CookPostcode
                 Console.WriteLine("Results:");
                 Console.WriteLine($"Entered Value: {returnedValues[0]}");
                 Console.WriteLine($"Cleaned Value: {returnedValues[1]}");
-                Console.WriteLine($"Delivery Option: {returnedValues[2]}");
+                Console.WriteLine($"Matched Postcode: {returnedValues[2]}");
+                Console.WriteLine($"Delivery Option: {returnedValues[3]}");
             }
         }
     }

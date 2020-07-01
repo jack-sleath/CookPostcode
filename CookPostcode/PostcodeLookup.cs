@@ -16,6 +16,7 @@ namespace CookPostcode
             var postCodeDeliveries = MapPostcodeDeliveries(new PostcodeData().PostCodeDataSet);
             var cleanPostcode = RemoveWhiteSpace(postcode);
             var trimmedPostcode = cleanPostcode;
+            var matchedPostcode = "All others";
 
             var message = "";
 
@@ -25,17 +26,18 @@ namespace CookPostcode
                 if (matchingPostCode != null)
                 {
                     message = matchingPostCode.Delivery;
+                    matchedPostcode = matchingPostCode.PostCode;
                 }
                 trimmedPostcode = trimmedPostcode.Substring(0, trimmedPostcode.Length - 1);
             }
 
             if (message == "")
             {
-                string[] deafultMessage = { postcode, cleanPostcode, "Delivery by Courier" };
+                string[] deafultMessage = { postcode, cleanPostcode, matchedPostcode, "Delivery by Courier" };
                 return deafultMessage;
             }
 
-            string[] customMessage = { postcode, cleanPostcode, message };
+            string[] customMessage = { postcode, cleanPostcode, matchedPostcode, message };
             return customMessage;
         }
 
