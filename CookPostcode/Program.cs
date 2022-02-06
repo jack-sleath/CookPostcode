@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CookPostcode.Services;
+using System;
 
 
 namespace CookPostcode
@@ -12,7 +13,8 @@ namespace CookPostcode
             {
                 Console.WriteLine("Please enter a postcode or finished when done:");
                 postcodeEntered = Console.ReadLine();
-                var returnedValues = new PostcodeLookup().GetValidDeliveryOptions(postcodeEntered);
+                var listOfPostcode = new PostcodeRepository().GetPostcodeDeliveries();
+                var returnedValues = new PostcodeLookupService().GetValidDeliveryOptions(postcodeEntered, listOfPostcode);
                 Console.WriteLine("Results:");
                 Console.WriteLine($"Entered Value: {returnedValues[0]}");
                 Console.WriteLine($"Cleaned Value: {returnedValues[1]}");

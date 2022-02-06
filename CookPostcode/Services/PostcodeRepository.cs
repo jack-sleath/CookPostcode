@@ -1,13 +1,16 @@
-﻿using System;
+﻿using CookPostcode.Models;
+using CookPostcode.Services.Interfaces;
+using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
+using System.Linq;
+using System.Text;
 
-namespace CookPostcode
+namespace CookPostcode.Services
 {
-    public class PostcodeData
+    internal class PostcodeRepository : IPostcodeRepository
     {
-        public DataSet PostCodeDataSet
+        private DataSet postCodeDataSet
         {
             get
             {
@@ -36,6 +39,32 @@ namespace CookPostcode
 
                 return dataSet;
             }
+        }
+
+        public List<PostcodeDelivery> GetPostcodeDeliveries()
+        {
+            //This is where a stored procedure would be called to get postCodeDataSet
+
+            if (postCodeDataSet.Tables.Count != 1)
+            {
+                throw new Exception("Incorrect tables supplied.");
+            }
+
+            var postCodeTable = postCodeDataSet.Tables[0];
+
+            var listOfPostCodeDeliveries = postCodeTable.AsEnumerable().Select(row => new PostcodeDelivery
+            {
+                PostCode = RemoveWhiteSpace(row["Postcode"].ToString()),
+                Delivery = row["Delivery"].ToString()
+            }).ToList();
+
+            return listOfPostCodeDeliveries.OrderByDescending(postCodeDelivery => postCodeDelivery.PostCode.Length).ToList();
+        }
+
+        private string RemoveWhiteSpace(string input)
+        {
+            return new string(input.Where(c => !char.IsWhiteSpace(c))
+                .ToArray()).ToUpper();
         }
     }
 }
