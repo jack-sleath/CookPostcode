@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CookPostcode.Model
+namespace CookPostcode.Models
 {
     public class PostcodeDelivery
     {
