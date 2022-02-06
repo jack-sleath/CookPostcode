@@ -15,7 +15,7 @@ namespace CookPostcode.Services
         {
             _postcodeCleanupService = postcodeCleanupService;
         }
-        private DataSet postCodeDataSet
+        private DataSet postcodeDataSet
         {
             get
             {
@@ -48,22 +48,22 @@ namespace CookPostcode.Services
 
         public List<PostcodeDelivery> GetPostcodeDeliveries()
         {
-            //This is where a stored procedure would be called to get postCodeDataSet
+            //This is where a stored procedure would be called to get postcodeDataSet
 
-            if (postCodeDataSet.Tables.Count != 1)
+            if (postcodeDataSet.Tables.Count != 1)
             {
                 throw new Exception("Incorrect tables supplied.");
             }
 
-            var postCodeTable = postCodeDataSet.Tables[0];
+            var postcodeTable = postcodeDataSet.Tables[0];
 
-            var listOfPostCodeDeliveries = postCodeTable.AsEnumerable().Select(row => new PostcodeDelivery
+            var listOfPostcodeDeliveries = postcodeTable.AsEnumerable().Select(row => new PostcodeDelivery
             {
-                PostCode = _postcodeCleanupService.CleanPostcode(row["Postcode"].ToString()),
+                Postcode = _postcodeCleanupService.CleanPostcode(row["Postcode"].ToString()),
                 Delivery = row["Delivery"].ToString()
             }).ToList();
 
-            return listOfPostCodeDeliveries.OrderByDescending(postCodeDelivery => postCodeDelivery.PostCode.Length).ToList();
+            return listOfPostcodeDeliveries.OrderByDescending(postcodeDelivery => postcodeDelivery.Postcode.Length).ToList();
         }
     }
 }

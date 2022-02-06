@@ -7,18 +7,21 @@ using System.Text;
 
 namespace CookPostcode.Services
 {
-    public class PostcodeLookupService : IPostcodeLookupService
+    public class PostcodeLookup : IPostcodeLookup
     {
         private IPostcodeCleanupService _postcodeCleanupService;
+        private IPostcodeRepository _postcodeRepository;
         private string defaultMessage = "Delivery by Courier";
 
-        public PostcodeLookupService(IPostcodeCleanupService postcodeCleanupService)
+        public PostcodeLookup(IPostcodeCleanupService postcodeCleanupService, IPostcodeRepository postcodeRepository)
         {
             _postcodeCleanupService = postcodeCleanupService;
+            _postcodeRepository = postcodeRepository;
         }
 
-        public PostcodeResults GetValidDeliveryOptions(string postcode, List<PostcodeDelivery> postCodeDeliveries)
+        public string[] GetValidDeliveryOptions(string postcode)
         {
+            var postcodeDeliveries = _postcodeRepository.GetPostcodeDeliveries();
             var cleanPostcode = _postcodeCleanupService.CleanPostcode(postcode);
             var trimmedPostcode = cleanPostcode;
             var matchedPostcode = "All others";
@@ -27,16 +30,16 @@ namespace CookPostcode.Services
 
             while (trimmedPostcode.Length > 0 && message == defaultMessage)
             {
-                var matchingPostCode = postCodeDeliveries.Where(postCodeDelivery => trimmedPostcode.Contains(postCodeDelivery.PostCode)).FirstOrDefault();
+                var matchingPostCode = postcodeDeliveries.Where(postCodeDelivery => trimmedPostcode.Contains(postCodeDelivery.Postcode)).FirstOrDefault();
                 if (matchingPostCode != null)
                 {
                     message = matchingPostCode.Delivery;
-                    matchedPostcode = matchingPostCode.PostCode;
+                    matchedPostcode = matchingPostCode.Postcode;
                 }
                 trimmedPostcode = trimmedPostcode.Substring(0, trimmedPostcode.Length - 1);
             }
 
-            return new PostcodeResults { Entered = postcode, Cleaned = cleanPostcode, Matched = matchedPostcode, DeliveryOption = message }; ;
+            return new string[] { postcode, cleanPostcode, matchedPostcode, message }; ;
         }
     }
 }

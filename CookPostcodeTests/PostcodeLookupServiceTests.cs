@@ -11,12 +11,14 @@ namespace CookPostcodeTests
     {
         private List<PostcodeDelivery> listOfPostcode = new List<PostcodeDelivery>();
         private Mock<IPostcodeCleanupService> postcodeCleanupService;
-        private PostcodeLookupService service;
+        private Mock<IPostcodeRepository> postcodeRepository;
+        private PostcodeLookup service;
 
         public PostcodeLookupServiceTests()
         {
             postcodeCleanupService = new Mock<IPostcodeCleanupService>();
-            service = new PostcodeLookupService(postcodeCleanupService.Object);
+            postcodeRepository = new Mock<IPostcodeRepository>();
+            service = new PostcodeLookup(postcodeCleanupService.Object, postcodeRepository.Object);
         }
 
         [Test]
@@ -24,10 +26,11 @@ namespace CookPostcodeTests
         {
             var enteredPostcode = "NOMATCH";
             postcodeCleanupService.Setup(x => x.CleanPostcode(It.IsAny<string>())).Returns(enteredPostcode);
-            listOfPostcode.Add(new PostcodeDelivery { PostCode = "AAAAAA", Delivery = "Test Message" });
+            listOfPostcode.Add(new PostcodeDelivery { Postcode = "AAAAAA", Delivery = "Test Message" });
+            postcodeRepository.Setup(x=>x.GetPostcodeDeliveries()).Returns(listOfPostcode);
 
-            var result = service.GetValidDeliveryOptions(enteredPostcode, listOfPostcode);
-            Assert.AreEqual("Delivery by Courier", result.DeliveryOption);
+            var result = service.GetValidDeliveryOptions(enteredPostcode);
+            Assert.AreEqual("Delivery by Courier", result[3]);
         }
 
         [Test]
@@ -35,13 +38,14 @@ namespace CookPostcodeTests
         {
             var enteredPostcode = "AAAAAAB";
             postcodeCleanupService.Setup(x => x.CleanPostcode(It.IsAny<string>())).Returns(enteredPostcode);
-            listOfPostcode.Add(new PostcodeDelivery { PostCode = "AAAAAA", Delivery = "Six A's" });
-            listOfPostcode.Add(new PostcodeDelivery { PostCode = "AAAAA", Delivery = "Five A's" });
-            listOfPostcode.Add(new PostcodeDelivery { PostCode = "AAAAB", Delivery = "Four A's and a B" });
+            listOfPostcode.Add(new PostcodeDelivery { Postcode = "AAAAAA", Delivery = "Six A's" });
+            listOfPostcode.Add(new PostcodeDelivery { Postcode = "AAAAA", Delivery = "Five A's" });
+            listOfPostcode.Add(new PostcodeDelivery { Postcode = "AAAAB", Delivery = "Four A's and a B" });
+            postcodeRepository.Setup(x => x.GetPostcodeDeliveries()).Returns(listOfPostcode);
 
-            var result = service.GetValidDeliveryOptions(enteredPostcode, listOfPostcode);
-            Assert.AreEqual("Six A's", result.DeliveryOption);
-            Assert.AreEqual("AAAAAA", result.Matched);
+            var result = service.GetValidDeliveryOptions(enteredPostcode);
+            Assert.AreEqual("Six A's", result[3]);
+            Assert.AreEqual("AAAAAA", result[2]);
         }
 
         [Test]
@@ -49,13 +53,14 @@ namespace CookPostcodeTests
         {
             var enteredPostcode = "STARTHERE";
             postcodeCleanupService.Setup(x => x.CleanPostcode(It.IsAny<string>())).Returns(enteredPostcode);
-            listOfPostcode.Add(new PostcodeDelivery { PostCode = "START", Delivery = "Postcode begins with START" });
-            listOfPostcode.Add(new PostcodeDelivery { PostCode = "FALSESTART", Delivery = "Postcode begins with FALSE" });
-            listOfPostcode.Add(new PostcodeDelivery { PostCode = "STARTEND", Delivery = "Postcode begins with END" });
+            listOfPostcode.Add(new PostcodeDelivery { Postcode = "START", Delivery = "Postcode begins with START" });
+            listOfPostcode.Add(new PostcodeDelivery { Postcode = "FALSESTART", Delivery = "Postcode begins with FALSE" });
+            listOfPostcode.Add(new PostcodeDelivery { Postcode = "STARTEND", Delivery = "Postcode begins with END" });
+            postcodeRepository.Setup(x => x.GetPostcodeDeliveries()).Returns(listOfPostcode);
 
-            var result = service.GetValidDeliveryOptions(enteredPostcode, listOfPostcode);
-            Assert.AreEqual("Postcode begins with START", result.DeliveryOption);
-            Assert.AreEqual("START", result.Matched);
+            var result = service.GetValidDeliveryOptions(enteredPostcode);
+            Assert.AreEqual("Postcode begins with START", result[3]);
+            Assert.AreEqual("START", result[2]);
         }
     }
 }
