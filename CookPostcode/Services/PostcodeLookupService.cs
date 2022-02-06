@@ -9,16 +9,23 @@ namespace CookPostcode.Services
 {
     public class PostcodeLookupService : IPostcodeLookupService
     {
-        public string[] GetValidDeliveryOptions(string postcode, List<PostcodeDelivery> postCodeDeliveries)
+        private IPostcodeCleanupService _postcodeCleanupService;
+        private string defaultMessage = "Delivery by Courier";
+
+        public PostcodeLookupService(IPostcodeCleanupService postcodeCleanupService)
         {
-            //This would come from a DB in production, but currently stored in a seperate class.
-            var cleanPostcode = RemoveWhiteSpace(postcode);
+            _postcodeCleanupService = postcodeCleanupService;
+        }
+
+        public PostcodeResults GetValidDeliveryOptions(string postcode, List<PostcodeDelivery> postCodeDeliveries)
+        {
+            var cleanPostcode = _postcodeCleanupService.CleanPostcode(postcode);
             var trimmedPostcode = cleanPostcode;
             var matchedPostcode = "All others";
 
-            var message = "";
+            var message = defaultMessage;
 
-            while (trimmedPostcode.Length > 0 && message == "")
+            while (trimmedPostcode.Length > 0 && message == defaultMessage)
             {
                 var matchingPostCode = postCodeDeliveries.Where(postCodeDelivery => trimmedPostcode.Contains(postCodeDelivery.PostCode)).FirstOrDefault();
                 if (matchingPostCode != null)
@@ -29,20 +36,7 @@ namespace CookPostcode.Services
                 trimmedPostcode = trimmedPostcode.Substring(0, trimmedPostcode.Length - 1);
             }
 
-            if (message == "")
-            {
-                string[] deafultMessage = { postcode, cleanPostcode, matchedPostcode, "Delivery by Courier" };
-                return deafultMessage;
-            }
-
-            string[] customMessage = { postcode, cleanPostcode, matchedPostcode, message };
-            return customMessage;
-        }
-
-        private string RemoveWhiteSpace(string input)
-        {
-            return new string(input.Where(c => !char.IsWhiteSpace(c))
-                .ToArray()).ToUpper();
+            return new PostcodeResults { Entered = postcode, Cleaned = cleanPostcode, Matched = matchedPostcode, DeliveryOption = message }; ;
         }
     }
 }
