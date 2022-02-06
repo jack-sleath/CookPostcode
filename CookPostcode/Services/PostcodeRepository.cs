@@ -8,8 +8,13 @@ using System.Text;
 
 namespace CookPostcode.Services
 {
-    internal class PostcodeRepository : IPostcodeRepository
+    public class PostcodeRepository : IPostcodeRepository
     {
+        private IPostcodeCleanupService _postcodeCleanupService;
+        public PostcodeRepository(IPostcodeCleanupService postcodeCleanupService)
+        {
+            _postcodeCleanupService = postcodeCleanupService;
+        }
         private DataSet postCodeDataSet
         {
             get
@@ -54,17 +59,11 @@ namespace CookPostcode.Services
 
             var listOfPostCodeDeliveries = postCodeTable.AsEnumerable().Select(row => new PostcodeDelivery
             {
-                PostCode = RemoveWhiteSpace(row["Postcode"].ToString()),
+                PostCode = _postcodeCleanupService.CleanPostcode(row["Postcode"].ToString()),
                 Delivery = row["Delivery"].ToString()
             }).ToList();
 
             return listOfPostCodeDeliveries.OrderByDescending(postCodeDelivery => postCodeDelivery.PostCode.Length).ToList();
-        }
-
-        private string RemoveWhiteSpace(string input)
-        {
-            return new string(input.Where(c => !char.IsWhiteSpace(c))
-                .ToArray()).ToUpper();
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CookPostcode.Services.Interfaces
 {
-    internal interface IPostcodeRepository
+    public interface IPostcodeRepository
     {
         List<PostcodeDelivery> GetPostcodeDeliveries();
     }
