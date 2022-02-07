@@ -26,9 +26,10 @@ namespace CookPostcodeTests
         {
             var enteredPostcode = "NOMATCH";
             postcodeCleanupService.Setup(x => x.CleanPostcode(It.IsAny<string>())).Returns(enteredPostcode);
+            postcodeCleanupService.Setup(x => x.IsValidPostcode(It.IsAny<string>())).Returns(true);
 
             listOfPostcode.Add(new PostcodeDelivery { Postcode = "AAAAAA", Delivery = "Test Message" });
-            postcodeRepository.Setup(x=>x.GetPostcodeDeliveries()).Returns(listOfPostcode);
+            postcodeRepository.Setup(x => x.GetPostcodeDeliveries()).Returns(listOfPostcode);
 
             var result = service.GetValidDeliveryOptions(enteredPostcode);
             Assert.AreEqual("Delivery by Courier", result[3]);
@@ -39,6 +40,7 @@ namespace CookPostcodeTests
         {
             var enteredPostcode = "AAAAAAB";
             postcodeCleanupService.Setup(x => x.CleanPostcode(It.IsAny<string>())).Returns(enteredPostcode);
+            postcodeCleanupService.Setup(x => x.IsValidPostcode(It.IsAny<string>())).Returns(true);
 
             listOfPostcode.Add(new PostcodeDelivery { Postcode = "AAAAAA", Delivery = "Six A's" });
             listOfPostcode.Add(new PostcodeDelivery { Postcode = "AAAAA", Delivery = "Five A's" });
@@ -55,6 +57,7 @@ namespace CookPostcodeTests
         {
             var enteredPostcode = "STARTHERE";
             postcodeCleanupService.Setup(x => x.CleanPostcode(It.IsAny<string>())).Returns(enteredPostcode);
+            postcodeCleanupService.Setup(x => x.IsValidPostcode(It.IsAny<string>())).Returns(true);
 
             listOfPostcode.Add(new PostcodeDelivery { Postcode = "START", Delivery = "Postcode begins with START" });
             listOfPostcode.Add(new PostcodeDelivery { Postcode = "FALSESTART", Delivery = "Postcode begins with FALSE" });
