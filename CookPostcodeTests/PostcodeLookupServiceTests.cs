@@ -26,6 +26,7 @@ namespace CookPostcodeTests
         {
             var enteredPostcode = "NOMATCH";
             postcodeCleanupService.Setup(x => x.CleanPostcode(It.IsAny<string>())).Returns(enteredPostcode);
+
             listOfPostcode.Add(new PostcodeDelivery { Postcode = "AAAAAA", Delivery = "Test Message" });
             postcodeRepository.Setup(x=>x.GetPostcodeDeliveries()).Returns(listOfPostcode);
 
@@ -38,6 +39,7 @@ namespace CookPostcodeTests
         {
             var enteredPostcode = "AAAAAAB";
             postcodeCleanupService.Setup(x => x.CleanPostcode(It.IsAny<string>())).Returns(enteredPostcode);
+
             listOfPostcode.Add(new PostcodeDelivery { Postcode = "AAAAAA", Delivery = "Six A's" });
             listOfPostcode.Add(new PostcodeDelivery { Postcode = "AAAAA", Delivery = "Five A's" });
             listOfPostcode.Add(new PostcodeDelivery { Postcode = "AAAAB", Delivery = "Four A's and a B" });
@@ -53,6 +55,7 @@ namespace CookPostcodeTests
         {
             var enteredPostcode = "STARTHERE";
             postcodeCleanupService.Setup(x => x.CleanPostcode(It.IsAny<string>())).Returns(enteredPostcode);
+
             listOfPostcode.Add(new PostcodeDelivery { Postcode = "START", Delivery = "Postcode begins with START" });
             listOfPostcode.Add(new PostcodeDelivery { Postcode = "FALSESTART", Delivery = "Postcode begins with FALSE" });
             listOfPostcode.Add(new PostcodeDelivery { Postcode = "STARTEND", Delivery = "Postcode begins with END" });

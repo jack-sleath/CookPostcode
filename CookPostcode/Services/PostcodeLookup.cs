@@ -1,4 +1,5 @@
-﻿using CookPostcode.Models;
+﻿using CookPostcode.Exceptions;
+using CookPostcode.Models;
 using CookPostcode.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,12 @@ namespace CookPostcode.Services
         {
             var postcodeDeliveries = _postcodeRepository.GetPostcodeDeliveries();
             var cleanPostcode = _postcodeCleanupService.CleanPostcode(postcode);
+
+            if (!_postcodeCleanupService.IsValidPostcode(cleanPostcode)) 
+            {
+                throw new ValidationException($"{cleanPostcode} is not a valid UK postcode.");
+            }
+
             var trimmedPostcode = cleanPostcode;
             var matchedPostcode = "All others";
 
