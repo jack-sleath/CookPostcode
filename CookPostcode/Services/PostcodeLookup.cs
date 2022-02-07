@@ -22,13 +22,15 @@ namespace CookPostcode.Services
 
         public string[] GetValidDeliveryOptions(string postcode)
         {
-            var postcodeDeliveries = _postcodeRepository.GetPostcodeDeliveries();
+            
             var cleanPostcode = _postcodeCleanupService.CleanPostcode(postcode);
 
             if (!_postcodeCleanupService.IsValidPostcode(cleanPostcode)) 
             {
                 throw new ValidationException($"{cleanPostcode} is not a valid UK postcode.");
             }
+
+            var postcodeDeliveries = _postcodeRepository.GetPostcodeDeliveries();
 
             var trimmedPostcode = cleanPostcode;
             var matchedPostcode = "All others";

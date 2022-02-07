@@ -1,3 +1,4 @@
+using CookPostcode.Exceptions;
 using CookPostcode.Models;
 using CookPostcode.Services;
 using CookPostcode.Services.Interfaces;
@@ -67,6 +68,18 @@ namespace CookPostcodeTests
             var result = service.GetValidDeliveryOptions(enteredPostcode);
             Assert.AreEqual("Postcode begins with START", result[3]);
             Assert.AreEqual("START", result[2]);
+        }
+
+        [Test]
+        public void BadPostcodeDoesNotCallDB() 
+        {
+            var enteredPostcode = "BADPOSTCODE";
+            postcodeCleanupService.Setup(x => x.CleanPostcode(It.IsAny<string>())).Returns(enteredPostcode);
+            postcodeCleanupService.Setup(x => x.IsValidPostcode(It.IsAny<string>())).Returns(false);
+
+            Assert.Throws<ValidationException>(() => service.GetValidDeliveryOptions(enteredPostcode));
+
+            postcodeRepository.Verify(x => x.GetPostcodeDeliveries(), Times.Never);
         }
     }
 }
