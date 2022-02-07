@@ -5,8 +5,8 @@ using System.Text;
 
 namespace CookPostcode.Services.Interfaces
 {
-    public interface IPostcodeLookupService
+    public interface IPostcodeLookup
     {
-        PostcodeResults GetValidDeliveryOptions(string postcode, List<PostcodeDelivery> postCodeDeliveries);
+        string[] GetValidDeliveryOptions(string postcode);
     }
 }

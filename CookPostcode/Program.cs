@@ -2,6 +2,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using CookPostcode.Services.Interfaces;
+using CookPostcode.Exceptions;
 
 namespace CookPostcode
 {
@@ -12,26 +13,32 @@ namespace CookPostcode
             //Setting up dependancy injection
             var serviceProvider = new ServiceCollection()
                 .AddSingleton<IPostcodeCleanupService, PostcodeCleanupService>()
-                .AddSingleton <IPostcodeLookupService, PostcodeLookupService>()
+                .AddSingleton<IPostcodeLookup, PostcodeLookup>()
                 .AddSingleton<IPostcodeRepository, PostcodeRepository>()
                 .BuildServiceProvider();
 
-            var postcodeLookupService = serviceProvider.GetService<IPostcodeLookupService>();
-            var postcodeRepository = serviceProvider.GetService<IPostcodeRepository>();
+            var postcodeLookupService = serviceProvider.GetService<IPostcodeLookup>();
 
             var postcodeEntered = "";
             while (postcodeEntered.ToUpper() != "FINISHED")
             {
+
                 Console.WriteLine("Please enter a postcode or finished when done:");
                 postcodeEntered = Console.ReadLine();
-                var listOfPostcode = postcodeRepository.GetPostcodeDeliveries();
-                var results = postcodeLookupService.GetValidDeliveryOptions(postcodeEntered, listOfPostcode);
-                Console.WriteLine("Results:");
-                Console.WriteLine($"    Entered Value: {results.Entered}");
-                Console.WriteLine($"    Cleaned Value: {results.Cleaned}");
-                Console.WriteLine($"    Matched Postcode: {results.Matched}");
-                Console.WriteLine($"    Delivery Option: {results.DeliveryOption}");
-                Console.WriteLine("");
+                try
+                {
+                    var results = postcodeLookupService.GetValidDeliveryOptions(postcodeEntered);
+                    Console.WriteLine("Results:");
+                    Console.WriteLine($"    Entered Value: {results[0]}");
+                    Console.WriteLine($"    Cleaned Value: {results[1]}");
+                    Console.WriteLine($"    Matched Postcode: {results[2]}");
+                    Console.WriteLine($"    Delivery Option: {results[3]}");
+                    Console.WriteLine("");
+                }
+                catch (ValidationException ex) {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine("");
+                }
             }
         }
     }

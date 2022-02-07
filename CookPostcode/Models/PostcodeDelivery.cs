@@ -6,7 +6,7 @@ namespace CookPostcode.Models
 {
     public class PostcodeDelivery
     {
-        public string PostCode { get; set; }
+        public string Postcode { get; set; }
         public string Delivery { get; set; }
     }
 }
